@@ -1,16 +1,16 @@
 #define EI_ARDUINO_INTERRUPTED_PIN
 #include <EnableInterrupt.h> //Thats for allow Int in all pins
 
-const int button1Pin = 4;
-const int button2Pin = 5;
+const int leftButtonPin = 4;
+const int RightButtonPin = 5;
 
 
 void buttonISR() {
     switch (arduinoInterruptedPin) {
-        case button1Pin:
+        case leftButtonPin:
             Serial.println("Button 1 is pressed");
             break;
-        case button2Pin:
+        case RightButtonPin:
             Serial.println("Button 2 is pressed");
             break;
    }
@@ -22,11 +22,11 @@ void buttonISR() {
 
 void setup() {
     Serial.begin(9600);
-    pinMode(button1Pin, INPUT);
-    pinMode(button2Pin, INPUT);
+    pinMode(leftButtonPin, INPUT);
+    pinMode(RightButtonPin, INPUT);
 
-    enableInterrupt(button1Pin, buttonISR, CHANGE);
-    enableInterrupt(button2Pin, buttonISR, CHANGE);
+    enableInterrupt(leftButtonPin, buttonISR, CHANGE);
+    enableInterrupt(RightButtonPin, buttonISR, CHANGE);
 }
 
 
