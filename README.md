@@ -14,4 +14,5 @@ Follow this guide to install it: [https://github.com/GreyGnome/EnableInterrupt/w
 
 * 1 x Arduino UNO
 * 2 x Push button
-* 2 x 10k Ohm resistor  
+* 2 x 10k Ohm resistor
+* 1 x HC-SR04 sensor
