@@ -1,63 +1,47 @@
 #define EI_ARDUINO_INTERRUPTED_PIN
 #include <EnableInterrupt.h> //Allow interruptions in all pins
-#include <TimerOne.h> // simplify the way to interact with timer 1
 
 
 const int leftButtonPin = 4;
 const int RightButtonPin = 5;
-
-// ultrasonic sensor pins
-const int triggerPin = 3;
+const int triggerPin = 6;
 const int echoPin = 2;
 
+const char ERROR = -9;
 // here is why 58 -> https://www.instructables.com/id/Non-blocking-Ultrasonic-Sensor-for-Arduino/
-const int DISTANCE_CONVERSOR = 58;
-// measurement in cm
-const int DISTANCE_RANGE = 25;
-// always must be above 20ms
-const int PULSE_FREQUENCY = 50000;
+const char DISTANCE_CONVERSOR = 58;
 
-volatile long echoTimeStart = 0;
-volatile long distance = 0;
+volatile int time = 0;
+volatile boolean leftButton = false;
+volatile boolean rightButton = false;
+
+long startPulseTime = 0;
 
 
 void buttonISR() {
     switch (arduinoInterruptedPin) {
         case leftButtonPin:
-            Serial.println("Button 1 is pressed");
+            leftButton = !leftButton;
             break;
         case RightButtonPin:
-            Serial.println("Button 2 is pressed");
+            rightButton = !rightButton;
             break;
    }
-
-   // for button bounce
-   delay(100);
+   //button bounce
+   delayMicroseconds(50);
 }
 
 
-void echoWaveISR(){
-    // echoTimeStart == 0 means, no pulse has sent
-    if(echoTimeStart != 0){
-      int duration = pulseIn(echoPin, HIGH);
-        distance = (micros() - echoTimeStart) / DISTANCE_CONVERSOR;
-        echoTimeStart = 0;
-
-        // an object is between the sensor and the wall
-        if(distance < DISTANCE_RANGE){
-            Serial.print("Distance: ");
-            Serial.println(distance);
-        }        
-    }
+void echoISR(){
+    time = micros() - startPulseTime;
 }
 
 
-void pulseWaveISR(){
-    // send pulses during 10 micro seconds 
+void sendPulse(){
+    startPulseTime = micros();
     digitalWrite(triggerPin, HIGH);
     delayMicroseconds(10);
     digitalWrite(triggerPin, LOW);
-    echoTimeStart = micros();
 }
 
 
@@ -69,27 +53,21 @@ void setup() {
     pinMode(triggerPin, OUTPUT);
 
     Serial.begin(9600);
-    while(!Serial) continue;
-    //Timer1.initialize(PULSE_FREQUENCY);
 
     // link ISR functions
     enableInterrupt(leftButtonPin, buttonISR, CHANGE);
     enableInterrupt(RightButtonPin, buttonISR, CHANGE);
-    enableInterrupt(echoPin, echoWaveISR, RISING);
-    //Timer1.attachInterrupt(pulseWaveISR);
+    enableInterrupt(echoPin, echoISR, CHANGE);
 }
 
 
 void loop() {
-    digitalWrite(triggerPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(triggerPin, LOW);
-    echoTimeStart = micros();
+    sendPulse();
+    int distance = (time / DISTANCE_CONVERSOR) + ERROR;
 
-    /*int duration = pulseIn(echoPin, HIGH);
-    distance = duration / DISTANCE_CONVERSOR;
     Serial.print("Distance: ");
-    Serial.println(distance);*/
+    Serial.print(distance);
+    Serial.println("cm");
     
-  delay(300);
+    delay(1000);
 }
