@@ -62,12 +62,18 @@ void setup() {
 
 
 void loop() {
-    sendPulse();
-    int distance = (time / DISTANCE_CONVERSOR) + ERROR;
+    // sendPulse();
+    // int distance = (time / DISTANCE_CONVERSOR) + ERROR;
 
-    Serial.print("Distance: ");
-    Serial.print(distance);
-    Serial.println("cm");
+    // Serial.print("Distance: ");
+    // Serial.print(distance);
+    // Serial.println("cm");
+    Serial.print("L button: ");
+    Serial.println(leftButton);
+
+    Serial.print("R button: ");
+    Serial.println(rightButton);
+    Serial.println();
     
     delay(1000);
 }
