@@ -3,9 +3,11 @@
 
 
 const int leftButtonPin = 4;
-const int RightButtonPin = 5;
+const int rightButtonPin = 5;
 const int triggerPin = 6;
 const int echoPin = 2;
+const int leftSolenoidPin = 9;
+const int rightSolenoidPin = 10;
 
 const char ERROR = -9;
 // here is why 58 -> https://www.instructables.com/id/Non-blocking-Ultrasonic-Sensor-for-Arduino/
@@ -22,9 +24,13 @@ void buttonISR() {
     switch (arduinoInterruptedPin) {
         case leftButtonPin:
             leftButton = !leftButton;
+            // activate solenoid
+            digitalWrite(leftSolenoidPin, leftButton);
             break;
-        case RightButtonPin:
+        case rightButtonPin:
             rightButton = !rightButton;
+            // activate solenoid
+            digitalWrite(rightSolenoidPin, rightButton);
             break;
    }
    //button bounce
@@ -48,32 +54,28 @@ void sendPulse(){
 void setup() {
     // configure pin modes 
     pinMode(leftButtonPin, INPUT);
-    pinMode(RightButtonPin, INPUT);
+    pinMode(rightButtonPin, INPUT);
     pinMode(echoPin, INPUT_PULLUP);
     pinMode(triggerPin, OUTPUT);
+    pinMode(leftSolenoidPin, OUTPUT);
+    pinMode(rightSolenoidPin, OUTPUT);
 
     Serial.begin(9600);
 
     // link ISR functions
     enableInterrupt(leftButtonPin, buttonISR, CHANGE);
-    enableInterrupt(RightButtonPin, buttonISR, CHANGE);
+    enableInterrupt(rightButtonPin, buttonISR, CHANGE);
     enableInterrupt(echoPin, echoISR, CHANGE);
 }
 
 
 void loop() {
-    // sendPulse();
-    // int distance = (time / DISTANCE_CONVERSOR) + ERROR;
+    sendPulse();
+    int distance = (time / DISTANCE_CONVERSOR) + ERROR;
 
-    // Serial.print("Distance: ");
-    // Serial.print(distance);
-    // Serial.println("cm");
-    Serial.print("L button: ");
-    Serial.println(leftButton);
-
-    Serial.print("R button: ");
-    Serial.println(rightButton);
-    Serial.println();
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println("cm");
     
     delay(1000);
 }
