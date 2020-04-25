@@ -11,12 +11,12 @@ Follow this guide to install it: [https://github.com/GreyGnome/EnableInterrupt/w
 **Note: because of that library, an error has shown on the console when you compile the code. Don't care about it, just carry on.**
 
 ### Required components
+This project uses two Arduino UNO, thus, for each microcontroller you need the following componenets:
 
-* 2 x Arduino UNO
-* 4 x Push button
-* 4 x 10k Ohm resistor
-* 4 x 220 Ohm resistor
-* 2 x HC-SR04 sensor
-* 4 x 5V solenoid
-* 4 x diode
-* 4 x NPN transistor
+* 2 x Push button
+* 2 x 10k Ohm resistor
+* 2 x 220 Ohm resistor
+* 1 x HC-SR04 sensor
+* 2 x 5V solenoid
+* 2 x diode
+* 2 x NPN transistor
