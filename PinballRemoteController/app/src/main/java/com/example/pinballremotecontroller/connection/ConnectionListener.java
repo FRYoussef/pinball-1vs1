@@ -1,5 +1,7 @@
 package com.example.pinballremotecontroller.connection;
 
+import android.bluetooth.BluetoothAdapter;
+
 import com.example.pinballremotecontroller.Observer;
 
 public class ConnectionListener extends Thread{
@@ -13,6 +15,8 @@ public class ConnectionListener extends Thread{
 
     @Override
     public void run() {
+        BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+
         while(true){
             if(connection.read() == 1){
                 observer.errorReading();

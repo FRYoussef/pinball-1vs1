@@ -24,6 +24,7 @@ public class Connection {
         OutputStream tmpOut = null;
         try {
             tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+            tmp.connect();
             tmpIn = tmp.getInputStream();
             tmpOut = tmp.getOutputStream();
 
@@ -71,6 +72,6 @@ public class Connection {
     }
 
     public boolean isConnected(){
-        return socket != null;
+        return socket.isConnected();
     }
 }

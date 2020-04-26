@@ -39,13 +39,13 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_controller);
 
-        resetValues();
         tvError = findViewById(R.id.tvError);
         clView = findViewById(R.id.clView);
         etPoints = findViewById(R.id.etPoints);
         tvScoreboard = findViewById(R.id.tvScoreboard);
         bStart = findViewById(R.id.bStart);
         bReset = findViewById(R.id.bReset);
+        resetValues();
 
         // attach events
         bStart.setOnClickListener(new View.OnClickListener() {
