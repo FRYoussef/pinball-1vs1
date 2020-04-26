@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pinball Remote Controller</string>
+    <string name="no_bluetooth">Sorry, your device does not support Bluetooth, you can\'t go ahead.</string>
+    <string name="bluetooth_title">Please, select a paired device:</string>
 </resources>
