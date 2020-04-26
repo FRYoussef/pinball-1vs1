@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.pinballremotecontroller.bluetoothList.BluetoothItem;
 import com.example.pinballremotecontroller.bluetoothList.MyBluetoothAdapter;
@@ -108,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickItem(BluetoothDevice device){
-        //TODO load next screen
-        Toast.makeText(this, device.getName(), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(getApplicationContext(), RemoteControllerActivity.class);
+        intent.putExtra("mac", device.getAddress());
+        startActivity(intent);
     }
 }

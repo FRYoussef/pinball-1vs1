@@ -4,4 +4,9 @@
     <string name="bluetooth_title">Please, select a paired device:</string>
     <string name="bluetooth_denied">Bluetooth activation denied, please, relaunch the app and allow Bluetooth to be activated.</string>
     <string name="no_paired_devices">There are no paired device, first pair the Bluetooth device on your mobile settings and then relaunch the app.</string>
+    <string name="match_points">Match points:</string>
+    <string name="default_points">3 points by default</string>
+    <string name="default_scoreboard">Select match points and press start</string>
+    <string name="start">Start</string>
+    <string name="reset">Reset</string>
 </resources>
