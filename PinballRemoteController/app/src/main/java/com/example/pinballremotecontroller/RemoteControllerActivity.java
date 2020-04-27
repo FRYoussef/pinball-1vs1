@@ -77,25 +77,29 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
     }
 
     void updateScoreboard(){
-        tvScoreboard.setText("Player 1 | Player 2\n\n" + playerScore1 + " : " + playerScore2);
+        tvScoreboard.setText("Player 1  |  Player 2\n\n" + playerScore1 + "  :  " + playerScore2);
     }
 
     void onClickStart(View v){
-        connection.write(new byte[Protocol.codifyMsg(Protocol.START)]);
+        connection.write(Protocol.codifyMsg(Protocol.START));
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                maxPoints = Integer.parseInt(etPoints.getText().toString());
+                String input = etPoints.getText().toString();
+                if(input.length() > 0)
+                    maxPoints = Integer.parseInt(input);
+
                 bStart.setEnabled(false);
                 etPoints.setEnabled(false);
+                bReset.setEnabled(true);
                 updateScoreboard();
             }
         });
     }
 
     void onClickReset(View v){
-        connection.write(new byte[Protocol.codifyMsg(Protocol.END)]);
+        connection.write(Protocol.codifyMsg(Protocol.END));
         resetValues();
         runOnUiThread(new Runnable() {
             @Override
@@ -123,12 +127,12 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
     @Override
     public void notify(int param) {
         if(param == PLAYER_1)
-            playerScore2++;
+            playerScore1++;
         else if(param == PLAYER_2)
             playerScore2++;
 
         if(playerScore1 >= maxPoints || playerScore2 >= maxPoints){
-            connection.write(new byte[Protocol.codifyMsg(Protocol.END)]);
+            connection.write(Protocol.codifyMsg(Protocol.END));
             resetValues();
             runOnUiThread(new Runnable() {
                 @Override
@@ -141,7 +145,12 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
             });
             return;
         }
-        updateScoreboard();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateScoreboard();
+            }
+        });
     }
 
     @Override
@@ -150,6 +159,7 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
     }
 
     private void resetValues(){
+        maxPoints = 3;
         playerScore1 = 0;
         playerScore2 = 0;
         runOnUiThread(new Runnable() {
@@ -157,7 +167,14 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
             public void run() {
                 bStart.setEnabled(true);
                 etPoints.setEnabled(true);
+                bReset.setEnabled(false);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        connection.shutDown();
     }
 }

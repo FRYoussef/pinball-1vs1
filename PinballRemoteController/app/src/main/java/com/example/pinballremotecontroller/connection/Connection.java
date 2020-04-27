@@ -36,9 +36,9 @@ public class Connection {
         mmOutStream = tmpOut;
     }
 
-    public int write(byte[] bytes){
+    public int write(byte data){
         try {
-            mmOutStream.write(bytes);
+            mmOutStream.write(data);
         } catch (IOException e) {
             e.printStackTrace();
             return 1;

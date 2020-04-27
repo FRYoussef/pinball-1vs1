@@ -1,5 +1,7 @@
 package com.example.pinballremotecontroller.connection;
 
+import android.util.Log;
+
 public class Protocol {
     public static final int START = 0;
     public static final int END = 1;
@@ -29,17 +31,19 @@ public class Protocol {
                 msg = -1;
                 break;
         }
+        Log.d("Protocol encod", "" + msg);
         return msg;
     }
 
     public static byte decodMsg(byte msg){
+        Log.d("Protocol decod", "" + msg);
         byte val = -1;
         byte mask = 0x3 << 2;
         byte type = (byte) (msg & mask);
 
         // SCORE_UP msg
         if(type == 8)
-            val = (byte) (msg & (0x2));
+            val = (byte) (msg & (0x1));
 
         return val;
     }

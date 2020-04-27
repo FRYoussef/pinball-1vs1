@@ -1,6 +1,7 @@
 package com.example.pinballremotecontroller.connection;
 
 import android.bluetooth.BluetoothAdapter;
+import android.util.Log;
 
 import com.example.pinballremotecontroller.Observer;
 
@@ -26,7 +27,7 @@ public class ConnectionListener extends Thread{
             int result = Protocol.decodMsg(connection.getFirstByte());
             if(result != -1){
                 //confirm reception
-                connection.write(new byte[Protocol.codifyMsg(Protocol.ACK)]);
+                connection.write(Protocol.codifyMsg(Protocol.ACK));
                 observer.notify(result);
             }
         }

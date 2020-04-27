@@ -12,4 +12,5 @@
     <string name="connection_error">There are connection issues.</string>
     <string name="player1_wins">Player 1 wins</string>
     <string name="player2_wins">Player 2 wins</string>
+    <string name="connecting">Connecting …</string>
 </resources>

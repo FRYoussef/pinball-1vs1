@@ -35,12 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
         tvError = findViewById(R.id.tvError);
         rlView = findViewById(R.id.rlView);
-        rvBluetooth = findViewById(R.id.rvBluetooth);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
-            showError(R.string.no_bluetooth);
+            showMessage(R.string.no_bluetooth);
             Log.e("MainActivity", "Bluetooth not supported");
             return;
         }
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         updateList();
     }
 
-    private void showError(final int error){
+    private void showMessage(final int error){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -68,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
         final Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() == 0) {
             Log.d("MainActivity", "No Bluetooth devices paired.");
-            showError(R.string.no_paired_devices);
+            showMessage(R.string.no_paired_devices);
             return;
         }
 
+        rvBluetooth = findViewById(R.id.rvBluetooth);
         final MainActivity context = this;
         // show paired devices list
         runOnUiThread(new Runnable() {
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_CANCELED){
-            showError(R.string.bluetooth_denied);
+            showMessage(R.string.bluetooth_denied);
             Log.e("MainActivity", "Bluetooth inactivated");
             return;
         }
@@ -110,5 +110,20 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), RemoteControllerActivity.class);
         intent.putExtra("mac", device.getAddress());
         startActivity(intent);
+        showMessage(R.string.connecting);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(rvBluetooth != null){
+                    rlView.setVisibility(View.VISIBLE);
+                    tvError.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 }
