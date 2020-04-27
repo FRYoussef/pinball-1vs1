@@ -76,6 +76,9 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
         th.start();
     }
 
+    void updateScoreboard(){
+        tvScoreboard.setText("Player 1 | Player 2\n\n" + playerScore1 + " : " + playerScore2);
+    }
 
     void onClickStart(View v){
         connection.write(new byte[Protocol.codifyMsg(Protocol.START)]);
@@ -86,8 +89,7 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
                 maxPoints = Integer.parseInt(etPoints.getText().toString());
                 bStart.setEnabled(false);
                 etPoints.setEnabled(false);
-                tvScoreboard.setText("Player 1 | Player 2\n\n"
-                        + playerScore1 + " : " + playerScore2);
+                updateScoreboard();
             }
         });
     }
@@ -137,7 +139,9 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
                         tvScoreboard.setText(R.string.player2_wins);
                 }
             });
+            return;
         }
+        updateScoreboard();
     }
 
     @Override

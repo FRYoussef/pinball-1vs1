@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 public class Connection {
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    private static final UUID MY_UUID = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
 
     private final BluetoothSocket socket;
     private final InputStream mmInStream;
