@@ -12,11 +12,9 @@ const int startLedPin = 13;
 
 //Handle events
 const int START = 0;
-const int ACK_GOAL = 1;
+const int ERROR_I2C = 1;
 const int END = 2;
-const int ACK_START = 3;
-const int SCORE_UP = 4;
-const int ACK_END = 5;
+const int SCORE_UP = 3;
 
 const char ERROR = -9;
 // here is why 58 -> https://www.instructables.com/id/Non-blocking-Ultrasonic-Sensor-for-Arduino/
@@ -26,6 +24,7 @@ volatile int time = 0;
 volatile boolean leftButton = false;
 volatile boolean rightButton = false;
 volatile int started = false; //set to false when raspberry works
+volatile boolean goal = false;
 
 long startPulseTime = 0;
 
@@ -48,9 +47,9 @@ void setup() {
     enableInterrupt(echoPin, echoISR, CHANGE);
 
     //configure i2c
-    Wire.begin(0x8);              
+    Wire.begin(0x4);              
     Wire.onReceive(receiveEvent);
-
+    Wire.onRequest(requestEvent);
   
 }
 
@@ -85,7 +84,7 @@ void sendPulse(){
     digitalWrite(triggerPin, LOW);
 }
 
-
+// Master (raspberry) has sent something
 void receiveEvent(int howMany) {
   while (Wire.available()) { // loop through all but the last
     int ev = Wire.read(); // receive byte as a character
@@ -93,8 +92,6 @@ void receiveEvent(int howMany) {
       case START:
         started = true;
         digitalWrite(startLedPin, HIGH);
-        break;
-      case ACK_GOAL:
         break;
       case END:
         started = false;
@@ -108,11 +105,22 @@ void receiveEvent(int howMany) {
   Wire.write(number);
 }*/
 
+// Master (raspberry) is calling and requesting something
+void requestEvent()
+{
+      if(goal){
+        Serial.print("receiveOK");
+        goal = false;
+        Wire.beginTransmission(0x4);
+        Wire.write(1);
+        Wire.endTransmission();
+        Serial.print("goaal");
+      }
+}
+
 void loop() {
 
-  while(!started) {} //Wait till START message
-
-  //Wire.write(ACK_START);
+  //while(!started) {} //Wait till START message
 
   sendPulse();
   int distance = (time / DISTANCE_CONVERSOR) + ERROR;
@@ -120,6 +128,10 @@ void loop() {
   Serial.print(distance);
   Serial.println("cm");
 
+  if (distance < 10 && distance > 0) { //depends on the goal size
+     goal=true;
+      Serial.print("Value:" + goal);
+  }
 
   delay(1000);
   
