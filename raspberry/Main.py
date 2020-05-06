@@ -1,50 +1,38 @@
-#  Raspberry Pi Master for Arduino Slave
-#  i2c_master_pi.py
-#  Connects to Arduino via I2C
-  
-#  DroneBot Workshop 2019
-#  https://dronebotworkshop.com
-
-from smbus import SMBus
-import time
-import traceback
-#import RPi.GPIO as GPIO
-
+from time import sleep
+from smbus2 import SMBusWrapper
+address = 0x08
+bus = SMBusWrapper(1)
 START = 0
 ERROR_I2C = 1
 END = 2
 SCORE_UP = 3
 
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setup(18,GPIO.OUT)
+player1 = 0
+player2 = 0
 
-addr = 0x4 # bus address
-bus = SMBus(1) # indicates /dev/ic2-1
+# Give the I2C device time to settle
+sleep(2)
 
-numb = 1
+start = False
+while not start:
+    with SMBusWrapper(1) as bus:
+        ledstate = input(">>>>   ")
+        if ledstate == "1":
+            start = True
+            print("Sending start")
+            bus.write_byte(address, START)
 
-print ("Enter 1 for ON or 0 for OFF")
-while numb == 1:
-	
-	# try:
-	# 	msg = bus.read_byte(addr)
-	# 	print(msg)
-	# 	time.sleep(0.5)
-		
-		
-
-	# 	if(msg == SCORE_UP):
-	# 		print("Score up!!")
-	# except:
-	# 	traceback.print_exc()
-	
-	ledstate = input(">>>>   ")
-
-	if ledstate == "1":
-		print("Sending start")
-		#GPIO.output(18, True)
-		bus.write_byte(addr, START)
-	elif ledstate == "0":
-		bus.write_byte(addr, END)
-	else:
-		numb = 0
+while 1:
+    with SMBusWrapper(1) as bus:
+        ledstate = input("End?   ")
+        if ledstate == "0":
+            print("Sending end")
+            bus.write_byte(address, END)
+            break
+        else:
+            try:
+                ev = bus.read_byte_data(address, 0)
+                if(ev == SCORE_UP):
+                    print("Score up received")
+            except:
+                print('Error')

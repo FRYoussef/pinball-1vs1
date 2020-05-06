@@ -1,7 +1,11 @@
 #define EI_ARDUINO_INTERRUPTED_PIN
 #include <EnableInterrupt.h> //Allow interruptions in all pins
 #include <Wire.h>
-
+ 
+#define SLAVE_ADDRESS 0x08
+ 
+boolean goal = false;
+ 
 const int leftButtonPin = 4;
 const int rightButtonPin = 5;
 const int triggerPin = 6;
@@ -23,36 +27,33 @@ const char DISTANCE_CONVERSOR = 58;
 volatile int time = 0;
 volatile boolean leftButton = false;
 volatile boolean rightButton = false;
-volatile int started = false; //set to false when raspberry works
-volatile boolean goal = false;
-
+volatile int started = false;
 long startPulseTime = 0;
 
-void setup() {
-    // configure pin modes 
-    pinMode(leftButtonPin, INPUT);
-    pinMode(rightButtonPin, INPUT);
-    pinMode(echoPin, INPUT_PULLUP);
-    pinMode(triggerPin, OUTPUT);
-    pinMode(leftSolenoidPin, OUTPUT);
-    pinMode(rightSolenoidPin, OUTPUT);
-   
-
-        
-    Serial.begin(9600);
-
-    // link ISR functions
-    enableInterrupt(leftButtonPin, buttonISR, CHANGE);
-    enableInterrupt(rightButtonPin, buttonISR, CHANGE);
-    enableInterrupt(echoPin, echoISR, CHANGE);
-
-    //configure i2c
-    Wire.begin(0x4);              
-    Wire.onReceive(receiveEvent);
-    Wire.onRequest(requestEvent);
+void setup(){
+  // configure pin modes 
+  pinMode(leftButtonPin, INPUT);
+  pinMode(rightButtonPin, INPUT);
+  pinMode(echoPin, INPUT_PULLUP);
+  pinMode(triggerPin, OUTPUT);
+  pinMode(leftSolenoidPin, OUTPUT);
+  pinMode(rightSolenoidPin, OUTPUT);
   
+  
+    
+  Serial.begin(9600);
+  
+  // link ISR functions
+  enableInterrupt(leftButtonPin, buttonISR, CHANGE);
+  enableInterrupt(rightButtonPin, buttonISR, CHANGE);
+  enableInterrupt(echoPin, echoISR, CHANGE);
+    
+  Wire.begin(SLAVE_ADDRESS);
+  Wire.onReceive(receiveEvent);
+  Wire.onRequest(requestEvent);
+  Serial.println("I2C Ready!");
 }
-
+ 
 
 void buttonISR() {
     switch (arduinoInterruptedPin) {
@@ -71,7 +72,6 @@ void buttonISR() {
    delayMicroseconds(50);
 }
 
-
 void echoISR(){
     time = micros() - startPulseTime;
 }
@@ -84,55 +84,47 @@ void sendPulse(){
     digitalWrite(triggerPin, LOW);
 }
 
-// Master (raspberry) has sent something
+
 void receiveEvent(int howMany) {
   while (Wire.available()) { // loop through all but the last
     int ev = Wire.read(); // receive byte as a character
     switch(ev) {
       case START:
         started = true;
-        digitalWrite(startLedPin, HIGH);
         break;
       case END:
         started = false;
-        digitalWrite(startLedPin, LOW);
         break;
     }
   }
 }
-
-/*void sendData(){
-  Wire.write(number);
-}*/
-
-// Master (raspberry) is calling and requesting something
-void requestEvent()
-{
-      if(goal){
-        Serial.print("receiveOK");
-        goal = false;
-        Wire.beginTransmission(0x4);
-        Wire.write(1);
-        Wire.endTransmission();
-        Serial.print("goaal");
-      }
+ 
+// Use the offset value to select a function
+void requestEvent(){
+    if(goal){
+      Wire.write(SCORE_UP);
+      Serial.println("GOAL SEND");
+      goal = false;
+    }
+    
+  
 }
 
-void loop() {
+ 
+void loop(){
+   if(started) {
 
-  //while(!started) {} //Wait till START message
-
-  sendPulse();
-  int distance = (time / DISTANCE_CONVERSOR) + ERROR;
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println("cm");
-
-  if (distance < 10 && distance > 0) { //depends on the goal size
-     goal=true;
-      Serial.print("Value:" + goal);
-  }
-
-  delay(1000);
+    sendPulse();
+    int distance = (time / DISTANCE_CONVERSOR) + ERROR;
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println("cm");
   
+    if (distance < 10 && distance > 0) { //depends on the goal size
+        goal=true;
+        Serial.println("Value:" + goal);
+    }
+  
+    delay(1000);
+  }
 }
