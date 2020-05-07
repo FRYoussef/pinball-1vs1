@@ -24,15 +24,16 @@ while not start:
 
 while 1:
     with SMBusWrapper(1) as bus:
-        ledstate = input("End?   ")
+        """ ledstate = input("End?   ")
         if ledstate == "0":
             print("Sending end")
             bus.write_byte(address, END)
             break
-        else:
-            try:
-                ev = bus.read_byte_data(address, 0)
-                if(ev == SCORE_UP):
-                    print("Score up received")
-            except:
-                print('Error')
+        else: """
+        try:
+            data = bus.read_i2c_block_data(address, 0, 1)
+            if(data[0] == SCORE_UP):
+                print("Score up!!")
+                sleep(5)
+        except:
+            print('Error')

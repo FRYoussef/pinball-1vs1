@@ -1,11 +1,14 @@
 #define EI_ARDUINO_INTERRUPTED_PIN
 #include <EnableInterrupt.h> //Allow interruptions in all pins
 #include <Wire.h>
- 
+
 #define SLAVE_ADDRESS 0x08
- 
+
+// 10 byte data buffer
+int receiveBuffer[9];
+uint8_t keepCounted = 0;
 boolean goal = false;
- 
+
 const int leftButtonPin = 4;
 const int rightButtonPin = 5;
 const int triggerPin = 6;
@@ -30,31 +33,34 @@ volatile boolean rightButton = false;
 volatile int started = false;
 long startPulseTime = 0;
 
-void setup(){
-  // configure pin modes 
-  pinMode(leftButtonPin, INPUT);
-  pinMode(rightButtonPin, INPUT);
-  pinMode(echoPin, INPUT_PULLUP);
-  pinMode(triggerPin, OUTPUT);
-  pinMode(leftSolenoidPin, OUTPUT);
-  pinMode(rightSolenoidPin, OUTPUT);
-  
-  
-    
-  Serial.begin(9600);
-  
-  // link ISR functions
-  enableInterrupt(leftButtonPin, buttonISR, CHANGE);
-  enableInterrupt(rightButtonPin, buttonISR, CHANGE);
-  enableInterrupt(echoPin, echoISR, CHANGE);
-    
-  Wire.begin(SLAVE_ADDRESS);
-  Wire.onReceive(receiveEvent);
-  Wire.onRequest(requestEvent);
-  Serial.println("I2C Ready!");
+// Read data in to buffer, offset in first element.
+void receiveData(int byteCount){
+  while (Wire.available()) { // loop through all but the last
+    int ev = Wire.read(); // receive byte as a character
+    switch(ev) {
+      case START:
+        started = true;
+        break;
+      case END:
+        started = false;
+        break;
+    }
+  }
 }
- 
 
+
+// Use the offset value to select a function
+void sendData(){
+  if(goal){
+    Wire.write(SCORE_UP);
+    Serial.println("Score up");
+    goal=false;
+  }
+  else {
+    Wire.write(6);
+    
+   }
+}
 void buttonISR() {
     switch (arduinoInterruptedPin) {
         case leftButtonPin:
@@ -85,34 +91,33 @@ void sendPulse(){
 }
 
 
-void receiveEvent(int howMany) {
-  while (Wire.available()) { // loop through all but the last
-    int ev = Wire.read(); // receive byte as a character
-    switch(ev) {
-      case START:
-        started = true;
-        break;
-      case END:
-        started = false;
-        break;
-    }
-  }
-}
- 
-// Use the offset value to select a function
-void requestEvent(){
-    if(goal){
-      Wire.write(SCORE_UP);
-      Serial.println("GOAL SEND");
-      goal = false;
-    }
-    
+void setup(){
+   pinMode(leftButtonPin, INPUT);
+  pinMode(rightButtonPin, INPUT);
+  pinMode(echoPin, INPUT_PULLUP);
+  pinMode(triggerPin, OUTPUT);
+  pinMode(leftSolenoidPin, OUTPUT);
+  pinMode(rightSolenoidPin, OUTPUT);
   
+  
+    
+  Serial.begin(9600);
+  
+  // link ISR functions
+  enableInterrupt(leftButtonPin, buttonISR, CHANGE);
+  enableInterrupt(rightButtonPin, buttonISR, CHANGE);
+  enableInterrupt(echoPin, echoISR, CHANGE);
+    
+    
+  Wire.begin(SLAVE_ADDRESS);
+  Wire.onReceive(receiveData);
+  Wire.onRequest(sendData);
+  Serial.println("I2C Ready!");
 }
 
- 
+
 void loop(){
-   if(started) {
+ if(started) {
 
     sendPulse();
     int distance = (time / DISTANCE_CONVERSOR) + ERROR;
