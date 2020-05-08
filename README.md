@@ -48,3 +48,7 @@ Now, you have to add the Serial Port Profile:
 `sudo sdptool add SP`
 
 That's all, reboot your pi and everything will be fine.
+
+## App
+
+After installing Bluetooth requirements in your Raspberry pi, you also need to install the app in an Android phone. Once done, before launching the app, first pair your Android device and your Pi. After that, you can launch it and select your Pi to connect it.
