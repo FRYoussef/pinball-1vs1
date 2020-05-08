@@ -2,7 +2,7 @@ from bluetooth import *
 from time import sleep
 
 if __name__ == '__main__':
-    msgs = [bytes([-128]), bytes([-112]), bytes([-112]), bytes([-128]), bytes([-112])]
+    msgs = [bytes([128]), bytes([144]), bytes([144]), bytes([128]), bytes([144])]
     i_msg = 0
     server_sock = BluetoothSocket( RFCOMM )
     server_sock.bind(("", PORT_ANY))
