@@ -25,11 +25,8 @@ public class ConnectionListener extends Thread{
             }
 
             int result = Protocol.decodMsg(connection.getFirstByte());
-            if(result != -1){
-                //confirm reception
-                connection.write(Protocol.codifyMsg(Protocol.ACK));
+            if(result != -1)
                 observer.notify(result);
-            }
         }
     }
 }

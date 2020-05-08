@@ -6,26 +6,25 @@ public class Protocol {
     public static final int START = 0;
     public static final int END = 1;
     public static final int SCORE_UP = 2;
-    public static final int ACK = 3;
+
+    public static final byte START_VAL = 0; //XXYY:0000 -> XX = 00, YY = 00
+    public static final byte END_VAL = (0x1 << 6); //XXYY:0000 -> XX = 01, YY = 00
+    public static final byte SCORE_UP_VAL = -128; //XXYY:0000 -> XX = 10, YY = 00
+
+    public static final byte PARAM_P1 = 0;
+    public static final byte PARAM_P2 = 16;
 
     public static byte codifyMsg(int msgType){
-        byte msg = 0;
+        byte msg;
         switch (msgType){
             case START:
-                //0000XXYY -> XX = 00, YY = 00
-                msg = 0;
+                msg = START_VAL;
                 break;
             case END:
-                //0000XXYY -> XX = 01, YY = 00
-                msg |= (0x1 << 2);
+                msg = END_VAL;
                 break;
             case SCORE_UP:
-                //0000XXYY -> XX = 10, YY = 00
-                msg |= (0x1 << 3);
-                break;
-            case ACK:
-                //0000XXYY -> XX = 11, YY = 00
-                msg |= (0x3 << 2);
+                msg = SCORE_UP_VAL;
                 break;
             default:
                 msg = -1;
@@ -38,12 +37,11 @@ public class Protocol {
     public static byte decodMsg(byte msg){
         Log.d("Protocol decod", "" + msg);
         byte val = -1;
-        byte mask = 0x3 << 2;
-        byte type = (byte) (msg & mask);
+        byte mask = -64; // 1100:0000
+        byte msg_type = (byte) (msg & mask);
 
-        // SCORE_UP msg
-        if(type == 8)
-            val = (byte) (msg & (0x1));
+        if(msg_type == SCORE_UP_VAL)
+            val = (byte) (msg & (0x1 << 4));
 
         return val;
     }

@@ -19,9 +19,6 @@ import com.example.pinballremotecontroller.connection.Protocol;
 import java.util.Set;
 
 public class RemoteControllerActivity extends AppCompatActivity implements Observer{
-    private static final int PLAYER_1 = 0;
-    private static final int PLAYER_2 = 1;
-
     private TextView tvError;
     private ConstraintLayout clView;
     private EditText etPoints;
@@ -126,9 +123,9 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
 
     @Override
     public void notify(int param) {
-        if(param == PLAYER_1)
+        if(param == Protocol.PARAM_P1)
             playerScore1++;
-        else if(param == PLAYER_2)
+        else if(param == Protocol.PARAM_P2)
             playerScore2++;
 
         if(playerScore1 >= maxPoints || playerScore2 >= maxPoints){
