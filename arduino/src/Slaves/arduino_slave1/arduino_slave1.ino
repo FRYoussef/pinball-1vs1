@@ -4,9 +4,6 @@
 
 #define SLAVE_ADDRESS 0x08
 
-// 10 byte data buffer
-int receiveBuffer[9];
-uint8_t keepCounted = 0;
 boolean goal = false;
 
 const int leftButtonPin = 4;
@@ -57,7 +54,7 @@ void sendData(){
     goal=false;
   }
   else {
-    Wire.write(6);
+    Wire.write(0);
     
    }
 }
@@ -127,7 +124,6 @@ void loop(){
   
     if (distance < 10 && distance > 0) { //depends on the goal size
         goal=true;
-        Serial.println("Value:" + goal);
     }
   
     delay(1000);

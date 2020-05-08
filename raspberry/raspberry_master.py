@@ -1,6 +1,7 @@
 from time import sleep
 from smbus2 import SMBusWrapper
-address = 0x08
+address_s1 = 0x08
+address_s2 = 0x04
 bus = SMBusWrapper(1)
 START = 0
 ERROR_I2C = 1
@@ -20,7 +21,8 @@ while not start:
         if ledstate == "1":
             start = True
             print("Sending start")
-            bus.write_byte(address, START)
+            bus.write_byte(address_s1, START)
+            bus.write_byte(address_s2, START)
 
 while 1:
     with SMBusWrapper(1) as bus:
@@ -31,9 +33,10 @@ while 1:
             break
         else: """
         try:
-            data = bus.read_i2c_block_data(address, 0, 1)
-            if(data[0] == SCORE_UP):
-                print("Score up!!")
-                sleep(5)
+            data1 = bus.read_i2c_block_data(address_s1, 0, 1)
+            data2 = bus.read_i2c_block_data(address_s2, 0, 1)
+            if(data1[0] == SCORE_UP):
+                print(data1[0])
+                sleep(7)
         except:
             print('Error')
