@@ -5,7 +5,7 @@
 #define SLAVE_ADDRESS 0x08
 
 boolean goal = false;
-
+boolean score_up = false;
 const int leftButtonPin = 4;
 const int rightButtonPin = 5;
 const int triggerPin = 6;
@@ -122,10 +122,13 @@ void loop(){
     Serial.print(distance);
     Serial.println("cm");
   
-    if (distance < 10 && distance > 0) { //depends on the goal size
+    if (distance < 7 && distance > 0 && !score_up) { //depends on the goal size
         goal=true;
+        score_up = true;
     }
-  
+    else if (distance >= 7) {
+      score_up = false;
+    }
     delay(1000);
   }
 }

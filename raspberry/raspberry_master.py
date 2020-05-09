@@ -10,6 +10,7 @@ SCORE_UP = 3
 
 player1 = 0
 player2 = 0
+winner = 0
 
 # Give the I2C device time to settle
 sleep(2)
@@ -24,7 +25,7 @@ while not start:
             bus.write_byte(address_s1, START)
             bus.write_byte(address_s2, START)
 
-while 1:
+while start:
     with SMBusWrapper(1) as bus:
         """ ledstate = input("End?   ")
         if ledstate == "0":
@@ -35,8 +36,20 @@ while 1:
         try:
             data1 = bus.read_i2c_block_data(address_s1, 0, 1)
             data2 = bus.read_i2c_block_data(address_s2, 0, 1)
-            if(data1[0] == SCORE_UP):
-                print(data1[0])
-                sleep(7)
+            if data1[0] == SCORE_UP:
+                player1 += 1
+            if data2[0] == SCORE_UP:
+                player2 += 1
+            print(str(player1) + " - " + str(player2))
+            sleep(2)
+            if player1 == 5:
+                winner = 1
+            if player2 == 5:
+                winner = 2
+            if winner != 0:
+                bus.write_byte(address_s1, END)
+                bus.write_byte(address_s2, END)
+                print("Winner: " + str(winner))
+                start = False
         except:
             print('Error')
