@@ -4,9 +4,8 @@ address_s1 = 0x08
 address_s2 = 0x04
 bus = SMBusWrapper(1)
 START = 0
-ERROR_I2C = 1
-END = 2
-SCORE_UP = 3
+END = 64
+SCORE_UP = 128
 
 player1 = 0
 player2 = 0
@@ -27,12 +26,6 @@ while not start:
 
 while start:
     with SMBusWrapper(1) as bus:
-        """ ledstate = input("End?   ")
-        if ledstate == "0":
-            print("Sending end")
-            bus.write_byte(address, END)
-            break
-        else: """
         try:
             data1 = bus.read_i2c_block_data(address_s1, 0, 1)
             data2 = bus.read_i2c_block_data(address_s2, 0, 1)

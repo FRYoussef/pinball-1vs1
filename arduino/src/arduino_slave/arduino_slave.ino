@@ -14,9 +14,9 @@ const int rightSolenoidPin = 10;
 const int startLedPin = 13;
 
 //Handle events
-const int START = 0;
-const int END = 2;
-const int SCORE_UP = 3;
+const byte START = 0;
+const byte END = 64;
+const byte SCORE_UP = 128;
 
 const char ERROR = -9;
 // here is why 58 -> https://www.instructables.com/id/Non-blocking-Ultrasonic-Sensor-for-Arduino/
@@ -49,6 +49,7 @@ void receiveData(int byteCount){
 // Use the offset value to select a function
 void sendData(){
   if(goal){
+    delay(1);
     Wire.write(SCORE_UP);
     goal=false;
   }
