@@ -4,8 +4,7 @@
 
 #define SLAVE_ADDRESS 0x04
 
-boolean goal = false;
-boolean score_up = false;
+
 const int leftButtonPin = 4;
 const int rightButtonPin = 5;
 const int triggerPin = 6;
@@ -16,7 +15,6 @@ const int startLedPin = 13;
 
 //Handle events
 const int START = 0;
-const int ERROR_I2C = 1;
 const int END = 2;
 const int SCORE_UP = 3;
 
@@ -27,6 +25,7 @@ const char DISTANCE_CONVERSOR = 58;
 volatile int time = 0;
 volatile boolean leftButton = false;
 volatile boolean rightButton = false;
+volatile boolean goal = false;
 volatile int started = false;
 long startPulseTime = 0;
 
@@ -39,6 +38,7 @@ void receiveData(int byteCount){
         started = true;
         break;
       case END:
+        noInterrupts();
         started = false;
         break;
     }
@@ -50,12 +50,10 @@ void receiveData(int byteCount){
 void sendData(){
   if(goal){
     Wire.write(SCORE_UP);
-    Serial.println("Score up");
     goal=false;
   }
   else {
     Wire.write(0);
-    
    }
 }
 void buttonISR() {
@@ -109,7 +107,6 @@ void setup(){
   Wire.begin(SLAVE_ADDRESS);
   Wire.onReceive(receiveData);
   Wire.onRequest(sendData);
-  Serial.println("I2C Ready!");
 }
 
 
@@ -122,14 +119,9 @@ void loop(){
     Serial.print(distance);
     Serial.println("cm");
   
-    if (distance < 7 && distance > 0 && !score_up) { //depends on the goal size
+    if (distance < 7 && distance > 0) { //depends on the goal size
         goal=true;
-        score_up = true;
     }
-    else if (distance >= 7) {
-      score_up = false;
-    }
-  
-    delay(1000);
+    delay(0.005);
   }
 }
