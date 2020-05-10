@@ -4,6 +4,9 @@
 
 #define SLAVE_ADDRESS 0x04
 
+//#define SLAVE_ADDRESS 0x08 //uncomment this line and comment the previous line to load the code in the other slave 
+
+
 
 const int leftButtonPin = 4;
 const int rightButtonPin = 5;
@@ -36,6 +39,7 @@ void receiveData(int byteCount){
     switch(ev) {
       case START:
         started = true;
+        interrupts();
         break;
       case END:
         noInterrupts();
