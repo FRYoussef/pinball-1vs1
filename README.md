@@ -49,3 +49,34 @@ Lastly, on your Pi terminal, run the python script:
 ```shell
 python3 raspberry_master.py
 ```
+
+## Raspberry pi
+
+### Bluetooth installation
+First, install bluez for bluetooth support, and bluetooth lib:
+
+`sudo apt-get install bluez python3-bluez`
+
+`sudo apt-get install python-bluetooth`
+
+If you run the script the following error will come up:
+
+`bluetooth.btcommon.BluetoothError: (2, 'No such file or directory')`
+
+To solve it, you need to run Bluetooth daemon in 'compatibility' mode, to do that edit `/etc/systemd/system/dbus-org.bluez.service` file, and replace the following line:
+
+`ExecStart=/usr/lib/bluetooth/bluetoothd`
+
+into
+
+`ExecStart=/usr/lib/bluetooth/bluetoothd -C`
+
+Now, you have to add the Serial Port Profile:
+
+`sudo sdptool add SP`
+
+That's all, reboot your pi and everything will be fine.
+
+## App
+
+After installing Bluetooth requirements in your Raspberry pi, you also need to install the app in an Android phone. Once done, before launching the app, first pair your Android device and your Pi. After that, you can launch it and select your Pi to connect it.
