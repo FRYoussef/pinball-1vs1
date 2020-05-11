@@ -36,7 +36,7 @@ On the screen, select "Interfacing options", then select "I2C" and "Yes", this w
 Secondly, you must install the dependencies required by the SMBus2 library and the SMBus2 library itselfs (you must have Python 3 installed too).
 ```shell
 sudo apt-get install i2c-tools
-pip3 install smbus2
+sudo pip3 install smbus2
 ```
 
 Then, open Arduino IDE and run the script in both Arduinos. Remember to change SLAVE_ADDRESS (comment and uncomment the lines at the code) in one of the scripts you run. Now, if you execute the following command on your Pi terminal:

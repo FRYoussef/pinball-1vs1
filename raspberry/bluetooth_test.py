@@ -28,7 +28,7 @@ if __name__ == '__main__':
         print(f"Accepted connection from {client_info}")
 
         try:
-            print("Witing for data...")
+            print("Waiting for data...")
             data = client_sock.recv(1024)
 
             if len(data) == 0:
