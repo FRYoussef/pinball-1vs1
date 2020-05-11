@@ -18,11 +18,8 @@ GOAL_P2 = bytes([144])
 
 def end_msg():
     data = client_sock.recv(1024) # wait till end msg
-    if data == END: # this condition doesn't work 
+    if data == END:
         started = False
-        with SMBusWrapper(1) as bus:
-            bus.write_byte(address_s1, int.from_bytes(END, byteorder='big'))
-            bus.write_byte(address_s2, int.from_bytes(END, byteorder='big'))
 
 
 
@@ -49,19 +46,17 @@ if __name__ == '__main__':
     print(f"Accepted connection from {client_info}")
 
   
-    
-    with SMBusWrapper(1) as bus:
-        data = client_sock.recv(1024)
-        _thread.start_new_thread( end_msg, () )
-        print(type(data))
-        if data == START:
-            started = True
-            print(f"received [{data}] from app")
-            start = True
-            print("Sending start msg to arduinos")
-            bus.write_byte(address_s1, int.from_bytes(START, byteorder='big'))
-            bus.write_byte(address_s2, int.from_bytes(START, byteorder='big'))
-        while started:
+    while 1:
+        with SMBusWrapper(1) as bus:
+            data = client_sock.recv(1024)
+            _thread.start_new_thread( end_msg, () )
+            if data == START:
+                started = True
+                print(f"received [{data}] from app")
+                print("Sending start msg to arduinos")
+                bus.write_byte(address_s1, int.from_bytes(START, byteorder='big'))
+                bus.write_byte(address_s2, int.from_bytes(START, byteorder='big'))
+            while started:
                 try:
                     data1 = bus.read_i2c_block_data(address_s1, 0, 1)
                     data2 = bus.read_i2c_block_data(address_s2, 0, 1)
@@ -79,6 +74,3 @@ if __name__ == '__main__':
                     client_sock.close()
                     server_sock.close()
                     print(e)
-
-        client_sock.close()
-        server_sock.close()
