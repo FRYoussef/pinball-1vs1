@@ -21,6 +21,34 @@ This project uses two Arduino UNO, thus, for each microcontroller you need the f
 * 2 x diode
 * 2 x NPN transistor
 
+Besides, for the I2C communication between the Arduinos and the Raspberry you need:
+* 2 x 10k Ohm resistor
+
+To know how to build the circuit, follow the diagrams.
+
+### I2C communication
+First of all,  open a terminal on the Raspberry Pi and execute the following command:
+```shell
+sudo raspi-config
+```
+On the screen, select "Interfacing options", then select "I2C" and "Yes", this will enable the ARM I2C interface.
+
+Secondly, you must install the dependencies required by the SMBus2 library and the SMBus2 library itselfs (you must have Python 3 installed too).
+```shell
+sudo apt-get install i2c-tools
+pip3 install smbus2
+```
+
+Then, open Arduino IDE and run the script in both Arduinos. Remember to change SLAVE_ADDRESS (comment and uncomment the lines at the code) in one of the scripts you run. Now, if you execute the following command on your Pi terminal:
+```shell
+i2cdetect -y 1
+```
+You should get an output where you can see that 04 and 08 addresses are ready.
+
+Lastly, on your Pi terminal, run the python script:
+```shell
+python3 raspberry_master.py
+```
 
 ## Raspberry pi
 
