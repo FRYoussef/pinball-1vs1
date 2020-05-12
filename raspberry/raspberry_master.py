@@ -17,6 +17,7 @@ GOAL_P1 = bytes([128])
 GOAL_P2 = bytes([144])
 
 def end_msg():
+    global started
     data = client_sock.recv(1024) # wait till end msg
     if data == END:
         started = False
