@@ -73,9 +73,9 @@
 
         <Button
             android:id="@+id/bStart"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/start"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:background="@drawable/ic_play_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/bReset"
             app:layout_constraintHorizontal_bias="0.5"
@@ -83,9 +83,9 @@
 
         <Button
             android:id="@+id/bReset"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/reset"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:background="@drawable/ic_stop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

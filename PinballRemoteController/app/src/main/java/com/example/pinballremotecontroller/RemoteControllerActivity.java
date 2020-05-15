@@ -29,6 +29,7 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
     private int playerScore1;
     private int playerScore2;
     private int maxPoints;
+    private boolean onMatch;
 
 
     @Override
@@ -87,9 +88,10 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
                 if(input.length() > 0)
                     maxPoints = Integer.parseInt(input);
 
-                bStart.setEnabled(false);
-                etPoints.setEnabled(false);
-                bReset.setEnabled(true);
+                onMatch = true;
+                bStart.setEnabled(!onMatch);
+                etPoints.setEnabled(!onMatch);
+                bReset.setEnabled(onMatch);
                 updateScoreboard();
             }
         });
@@ -123,6 +125,9 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
 
     @Override
     public void notify(int param) {
+        if(!onMatch)
+            return;
+
         if(param == Protocol.PARAM_P1)
             playerScore1++;
         else if(param == Protocol.PARAM_P2)
@@ -156,15 +161,16 @@ public class RemoteControllerActivity extends AppCompatActivity implements Obser
     }
 
     private void resetValues(){
+        onMatch = false;
         maxPoints = 3;
         playerScore1 = 0;
         playerScore2 = 0;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                bStart.setEnabled(true);
-                etPoints.setEnabled(true);
-                bReset.setEnabled(false);
+                bStart.setEnabled(!onMatch);
+                etPoints.setEnabled(!onMatch);
+                bReset.setEnabled(onMatch);
             }
         });
     }
