@@ -21,6 +21,8 @@ def end_msg():
     data = client_sock.recv(1024) # wait till end msg
     if data == END:
         started = False
+        bus.write_byte(address_s1, int.from_bytes(START, byteorder='big'))
+        bus.write_byte(address_s2, int.from_bytes(START, byteorder='big'))
 
 
 
@@ -61,6 +63,7 @@ if __name__ == '__main__':
                 try:
                     data1 = bus.read_i2c_block_data(address_s1, 0, 1)
                     data2 = bus.read_i2c_block_data(address_s2, 0, 1)
+                    sleep(2)
                     if data1[0] == int.from_bytes(SCORE_UP, byteorder='big'):
                         print(f"sending score up (p1) to app")
                         client_sock.send(GOAL_P2)
