@@ -21,8 +21,8 @@ def end_msg():
     data = client_sock.recv(1024) # wait till end msg
     if data == END:
         started = False
-        bus.write_byte(address_s1, int.from_bytes(START, byteorder='big'))
-        bus.write_byte(address_s2, int.from_bytes(START, byteorder='big'))
+        bus.write_byte(address_s1, int.from_bytes(END, byteorder='big'))
+        bus.write_byte(address_s2, int.from_bytes(END, byteorder='big'))
 
 
 
