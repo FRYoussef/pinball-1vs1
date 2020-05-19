@@ -1,0 +1,4 @@
+PinballController/*
+!PinballController/app/
+PinballController/app/*
+!PinballController/app/src
