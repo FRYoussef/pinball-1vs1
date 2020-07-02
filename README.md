@@ -1,5 +1,5 @@
 # pinball-1vs1
-A pinball player vs player. 2 arduinos and 1 raspberry pi as scoreboard. 
+A pinball player vs player. 2 Arduinos, a Raspberry Pi as server, and an Android app as scoreboard. 
 
 ## Arduino
 
